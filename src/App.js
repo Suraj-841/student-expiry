@@ -6,12 +6,23 @@ import { Toaster, toast } from 'react-hot-toast';
 import StudentCard from './components/StudentCard';
 
 const API_BASE = 'https://backend-4xju.onrender.com';
+const ACCESS_CODE = "Suraj@123"; 
+
 
 export default function App() {
   const [students, setStudents] = useState([]);
   const [filter, setFilter] = useState('all');
   const [darkMode, setDarkMode] = useState(false);
-
+  const [isAllowed, setIsAllowed] = useState(false);
+  useEffect(() => {
+    const userInput = prompt("Enter access code:");
+    if (userInput === ACCESS_CODE) {
+      setIsAllowed(true);
+    } else {
+      alert("❌ Access denied");
+      window.location.href = "https://google.com";
+    }
+  }, []);
   const fetchStudents = async () => {
     try {
       let endpoint = `${API_BASE}/students`;
@@ -104,6 +115,7 @@ export default function App() {
   };
   
 
+  if (!isAllowed) return null; 
   return (
     <div className={darkMode ? 'dark bg-gray-900 text-white min-h-screen p-4' : 'bg-gradient-to-br from-gray-100 to-blue-50 min-h-screen p-4'}>
       <Toaster />
