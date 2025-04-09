@@ -64,6 +64,42 @@ export default function App() {
     fetchStudents();
   }, [filter,dayFilter]);
 
+
+  const downloadLeftStudentsCSV = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/left-students`);
+      const leftStudents = res.data;
+  
+      if (!leftStudents.length) {
+        toast.error("No left student records found.");
+        return;
+      }
+  
+      const headers = Object.keys(leftStudents[0]).join(",");
+      const rows = leftStudents.map(s =>
+        Object.values(s).map(val => `"${val ?? ''}"`).join(",")
+      );
+  
+      const csvContent = [headers, ...rows].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+  
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "left_students_log.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  
+      toast.success("CSV downloaded!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch left student data.");
+    }
+  };
+  
+
+
   const vacateSeat = async (seat_no) => {
     try {
       await axios.post(`${API_BASE}/replace-student`, {
@@ -184,6 +220,15 @@ export default function App() {
         >
           {darkMode ? '🌞 Light' : '🌙 Dark'}
         </button>
+
+        <button
+        onClick={downloadLeftStudentsCSV}
+        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+      >
+        ⬇️ Download Left Students CSV
+      </button>
+
+
       </div>
       </div>
 
