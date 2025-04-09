@@ -14,6 +14,8 @@ export default function App() {
   const [filter, setFilter] = useState('all');
   const [darkMode, setDarkMode] = useState(false);
   const [isAllowed, setIsAllowed] = useState(false);
+  const [dayFilter, setDayFilter] = useState("all");
+
   useEffect(() => {
     const userInput = prompt("Enter access code:");
     if (userInput === ACCESS_CODE) {
@@ -29,11 +31,30 @@ export default function App() {
       if (filter === 'expired') endpoint = `${API_BASE}/expired-students`;
       const res = await axios.get(endpoint);
 
+
       let filtered = res.data;
+
+      // Status-based filter
       if (filter === 'vacant') {
-        filtered = res.data.filter(s => s['Name']?.toLowerCase() === 'vacant');
+        filtered = filtered.filter(s => s['Name']?.toLowerCase() === 'vacant');
       }
+      if (filter === 'expired') {
+        // Already handled by endpoint
+      }
+
+      // Day Type-based filter
+      if (dayFilter !== 'all') {
+        const matchType = {
+          full: 'full day',
+          morning: 'morning half',
+          evening: 'evening half'
+        }[dayFilter];
+        filtered = filtered.filter(s => (s['Day Type'] || '').toLowerCase() === matchType);
+      }
+
       setStudents(filtered);
+
+
     } catch (err) {
       toast.error('Error fetching student data');
     }
@@ -137,22 +158,33 @@ export default function App() {
       <Toaster />
       <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-blue-900 dark:text-white drop-shadow-sm flex mx-auto items-center">Student Dashboard</h1>
-        <div className="flex gap-4">
-          <select
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-md px-3 py-1 shadow"
-          >
-            <option value="all">All</option>
-            <option value="expired">Expired</option>
-            <option value="vacant">Vacant</option>
-          </select>
-          <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
-            onClick={() => setDarkMode(!darkMode)}
-          >
-            {darkMode ? '🌞 Light' : '🌙 Dark'}
-          </button>
-        </div>
+        <div className="flex gap-2 flex-wrap">
+        <select
+          onChange={(e) => setFilter(e.target.value)}
+          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-md px-3 py-1 shadow"
+        >
+          <option value="all">All Status</option>
+          <option value="expired">Expired</option>
+          <option value="vacant">Vacant</option>
+        </select>
+
+        <select
+          onChange={(e) => setDayFilter(e.target.value)}
+          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-md px-3 py-1 shadow"
+        >
+          <option value="all">All Day Types</option>
+          <option value="full">Full Day</option>
+          <option value="morning">Morning Half</option>
+          <option value="evening">Evening Half</option>
+        </select>
+
+        <button
+          className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
+          onClick={() => setDarkMode(!darkMode)}
+        >
+          {darkMode ? '🌞 Light' : '🌙 Dark'}
+        </button>
+      </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
