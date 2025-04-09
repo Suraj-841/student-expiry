@@ -1,41 +1,52 @@
-// === StudentCard Component === //
+// === StudentCard.jsx (Styled with Dark Mode Support + Actions) ===
 
-// frontend/src/components/StudentCard.jsx
 import React from 'react';
 
-export default function StudentCard({ student, onUpdate, onReplace, onVacate }) {
+export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace }) {
+  const {
+    "Seat No": seat,
+    "Name": name,
+    "Day Type": day,
+    "Charge": charge,
+    "Start Date": start,
+    "Expiry Date": expiry,
+    "Status": status,
+    "Phone": phone,
+  } = student;
+
   return (
-    <div className="bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-600 rounded-2xl shadow-lg p-6 flex flex-col justify-between">
-      <div>
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{student.Name}</h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          Seat: <span className="font-medium text-gray-700 dark:text-white">{student["Seat No"]}</span>
-        </p>
-        <p className="text-gray-600 dark:text-gray-300">
-          Status: <span className="font-medium text-gray-700 dark:text-white">{student.Status}</span>
-        </p>
-        <p className="text-gray-600 dark:text-gray-300">
-          Expiry: <span className="font-medium text-gray-700 dark:text-white">{student["Expiry Date"]}</span>
-        </p>
-      </div>
-      <div className="flex flex-col gap-2 mt-4">
+    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 transition hover:shadow-xl">
+      <h2 className="text-xl font-semibold text-blue-800 dark:text-blue-300 mb-2">Seat {seat}: {name}</h2>
+      <p className="text-sm mb-1"><strong>📞 Phone:</strong> {phone || 'N/A'}</p>
+      <p className="text-sm mb-1"><strong>🕓 Day Type:</strong> {day || 'N/A'}</p>
+      <p className="text-sm mb-1"><strong>💰 Charge:</strong> ₹{charge || 0}</p>
+      <p className="text-sm mb-1"><strong>📅 Start:</strong> {start || 'N/A'}</p>
+      <p className="text-sm mb-1"><strong>📆 Expiry:</strong> {expiry || 'N/A'}</p>
+      <p className="text-sm mb-3">
+        <strong>Status:</strong>{" "}
+        <span className={`font-bold ${status?.toLowerCase() === 'pending' ? 'text-red-500' : 'text-green-600'}`}>
+          {status || 'N/A'}
+        </span>
+      </p>
+
+      <div className="flex flex-wrap gap-2 mt-3">
         <button
-          onClick={onUpdate}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition duration-150"
+          onClick={() => onVacate(seat)}
+          className="px-3 py-1 text-sm rounded bg-yellow-500 hover:bg-yellow-600 text-white"
         >
-          📅 Update Expiry
+          Vacate
         </button>
         <button
-          onClick={() => onReplace(student["Seat No"])}
-          className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded-lg transition duration-150"
+          onClick={() => onUpdateExpiry(seat, name)}
+          className="px-3 py-1 text-sm rounded bg-blue-600 hover:bg-blue-700 text-white"
         >
-          🔄 Replace
+          Update Expiry
         </button>
         <button
-          onClick={() => onVacate(student["Seat No"])}
-          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded-lg transition duration-150"
+          onClick={() => onReplace(seat)}
+          className="px-3 py-1 text-sm rounded bg-green-600 hover:bg-green-700 text-white"
         >
-          ❌ Vacate
+          Replace
         </button>
       </div>
     </div>
