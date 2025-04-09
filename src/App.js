@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
 import StudentCard from './components/StudentCard';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = 'https://backend-4xju.onrender.com';
 
 export default function App() {
   const [students, setStudents] = useState([]);
