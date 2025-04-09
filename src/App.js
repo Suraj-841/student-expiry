@@ -12,7 +12,8 @@ export default function App() {
   const [filter, setFilter] = useState("all");
 
   const fetchStudents = async () => {
-    const res = await axios.get('http://localhost:8000/students');
+    const res = await axios.get('https://backend-4xju.onrender.com/students');
+ 
     setStudents(res.data);
   };
 
@@ -21,7 +22,7 @@ export default function App() {
   const handleUpdate = async (seatNo, name) => {
     const newDate = prompt('Enter new expiry date (e.g., 01 May 2025):');
     if (newDate) {
-      await axios.post('http://localhost:8000/update-expiry', {
+      await axios.post('https://backend-4xju.onrender.com/update-expiry', {
         seat_no: seatNo,
         name: name,
         new_expiry: newDate
@@ -36,7 +37,7 @@ export default function App() {
     if (!name) return;
 
     if (name.trim().toLowerCase() === "vacant") {
-      await axios.post("http://localhost:8000/replace-student", {
+      await axios.post("https://backend-4xju.onrender.com/replace-student", {
         seat_no: seatNo,
         name: "Vacant",
         day_type: "",
@@ -57,7 +58,7 @@ export default function App() {
     const status = prompt("Enter status (e.g., pending, Done, etc.):");
 
     if (name && dayType && charge && start && expiry && status) {
-      await axios.post("http://localhost:8000/replace-student", {
+      await axios.post("https://backend-4xju.onrender.com/replace-student", {
         seat_no: seatNo,
         name,
         day_type: dayType,
@@ -72,7 +73,7 @@ export default function App() {
   };
 
   const handleVacate = async (seatNo) => {
-    await axios.post("http://localhost:8000/replace-student", {
+    await axios.post("https://backend-4xju.onrender.com/replace-student", {
       seat_no: seatNo,
       name: "Vacant",
       day_type: "",
@@ -132,6 +133,3 @@ export default function App() {
 
 
 
-
-
-// git remote add origin https://github.com/Suraj-841/student-expiry.git
