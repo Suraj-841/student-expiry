@@ -3,7 +3,7 @@
 import React from 'react';
 import QRCode from 'react-qr-code';
 
-export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace,onToggleStatus }) {
+export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace,onToggleStatus,whatsappLink }) {
   const {
     "Seat No": seat,
     "Name": name,
@@ -15,8 +15,7 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
     "Phone": phone,
   } = student;
 
-  const groupLink = ` https://chat.whatsapp.com/FKCO18MfPgREEKOfimn3MD`;
-  const whatsappURL = `https://wa.me/91${phone}?text=Hi ${name}, please join our study group: ${groupLink}`;
+  const whatsappURL = `https://wa.me/91${phone}?text=Hi ${name}, please join our study group: ${whatsappLink}`;
   const sendWhatsapp = () => {
     if (!phone || phone.trim() === "") return alert("❌ No phone number available.");
     window.open(whatsappURL, '_blank');

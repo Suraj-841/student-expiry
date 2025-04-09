@@ -15,6 +15,18 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isAllowed, setIsAllowed] = useState(false);
   const [dayFilter, setDayFilter] = useState("all");
+  const [whatsappLink, setWhatsappLink] = useState("");
+  const [newLink, setNewLink] = useState("");
+
+
+  useEffect(() => {
+    axios.get(`${API_BASE}/whatsapp-link`)
+      .then(res => {
+        setWhatsappLink(res.data.link);
+        setNewLink(res.data.link);
+      })
+      .catch(() => toast.error("Failed to load WhatsApp link"));
+  }, []);
 
   useEffect(() => {
     const userInput = prompt("Enter access code:");
@@ -228,6 +240,29 @@ export default function App() {
         ⬇️ Download Left Students CSV
       </button>
 
+      <div className="flex items-center gap-2 mt-4">
+      <input
+        type="text"
+        value={newLink}
+        onChange={(e) => setNewLink(e.target.value)}
+        className="w-full md:w-96 px-4 py-2 rounded border border-gray-300 dark:bg-gray-700 dark:text-white"
+        placeholder="Paste new WhatsApp group link"
+      />
+      <button
+        onClick={() => {
+          axios.post(`${API_BASE}/whatsapp-link`, { link: newLink })
+            .then(() => {
+              toast.success("WhatsApp link updated!");
+              setWhatsappLink(newLink);
+            })
+            .catch(() => toast.error("Failed to update link"));
+        }}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Save
+      </button>
+    </div>
+
 
       </div>
       </div>
@@ -241,6 +276,7 @@ export default function App() {
             onUpdateExpiry={() => updateExpiry(student["Seat No"], student["Name"])}
             onReplace={() => replaceStudent(student["Seat No"])}
             onToggleStatus={() => toggleStatus(student["Seat No"], student["Status"])}
+            whatsappLink={whatsappLink} 
           />
         ))}
       </div>
