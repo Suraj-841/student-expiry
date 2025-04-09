@@ -1,6 +1,7 @@
 // === StudentCard.jsx (Styled with Dark Mode Support + Actions) ===
 
 import React from 'react';
+import QRCode from 'react-qr-code';
 
 export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace,onToggleStatus }) {
   const {
