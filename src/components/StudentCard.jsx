@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace }) {
+export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace,onToggleStatus }) {
   const {
     "Seat No": seat,
     "Name": name,
@@ -48,6 +48,16 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
         >
           Replace
         </button>
+        <button
+          onClick={() => onToggleStatus(seat, status)}
+          className={`px-3 py-1 text-sm rounded ${
+            status?.toLowerCase() === "pending" ? "bg-green-600" : "bg-red-600"
+          } hover:opacity-90 text-white`}
+        >
+          {status?.toLowerCase() === "pending" ? "Mark Done" : "Mark Pending"}
+        </button>
+
+
       </div>
     </div>
   );

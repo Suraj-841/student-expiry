@@ -78,6 +78,22 @@ export default function App() {
       toast.error('Failed to update expiry');
     }
   };
+
+  const toggleStatus = async (seat_no, currentStatus) => {
+    const newStatus = currentStatus.toLowerCase() === "pending" ? "Done" : "Pending";
+  
+    try {
+      await axios.post(`${API_BASE}/update-status`, {
+        seat_no,
+        new_status: newStatus,
+      });
+      toast.success(`Seat ${seat_no} marked ${newStatus}`);
+      fetchStudents();
+    } catch (err) {
+      toast.error("Failed to update status");
+    }
+  };
+  
   
   const replaceStudent = async (seat_no) => {
     const name = prompt("Enter student name (or type 'Vacant'):");
@@ -147,6 +163,7 @@ export default function App() {
             onVacate={vacateSeat}
             onUpdateExpiry={() => updateExpiry(student["Seat No"], student["Name"])}
             onReplace={() => replaceStudent(student["Seat No"])}
+            onToggleStatus={() => toggleStatus(student["Seat No"], student["Status"])}
           />
         ))}
       </div>
