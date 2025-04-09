@@ -62,7 +62,7 @@ export default function App() {
 
   useEffect(() => {
     fetchStudents();
-  }, [filter]);
+  }, [filter,dayFilter]);
 
   const vacateSeat = async (seat_no) => {
     try {

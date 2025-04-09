@@ -73,9 +73,6 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
             >
               📤 Send WhatsApp
             </button>
-            <div className="mt-2 bg-white p-2 rounded shadow-sm">
-              <QRCode value={whatsappURL} size={80} />
-            </div>
           </>
         )}
 
