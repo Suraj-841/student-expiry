@@ -240,15 +240,14 @@ export default function App() {
         ⬇️ Download Left Students CSV
       </button>
 
-
+    <button  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md mx-auto my-auto">
       <a
-      href={API_BASE`/download-db`}
-      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md"
+      href={`${API_BASE}/download-db`}
       download
-    >
+      >
       ⬇️ Download DB
     </a>
-
+    </button>
       <div className="flex items-center gap-2 mt-4">
       <input
         type="text"
