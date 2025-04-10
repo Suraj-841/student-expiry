@@ -298,7 +298,7 @@ export default function App() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {students.map((student, index) => (
           <StudentCard
-            key={index}
+          key={student["Seat No"]}
             student={student}
             onVacate={vacateSeat}
             onUpdateExpiry={() => updateExpiry(student["Seat No"], student["Name"])}
