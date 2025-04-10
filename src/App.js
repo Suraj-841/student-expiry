@@ -51,7 +51,6 @@ export default function App() {
         filtered = filtered.filter(s => s['Name']?.toLowerCase() === 'vacant');
       }
       if (filter === 'expired') {
-        filtered = filtered.filter(s => s['Name']?.toLowerCase() === 'expired');
       }
 
       // Day Type-based filter
