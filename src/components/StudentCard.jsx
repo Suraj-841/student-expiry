@@ -38,24 +38,28 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
 
       <div className="flex flex-wrap gap-2 mt-3">
         <button
+          type="button"
           onClick={() => onVacate(seat)}
           className="px-3 py-1 text-sm rounded bg-yellow-500 hover:bg-yellow-600 text-white"
         >
           Vacate
         </button>
         <button
+          type="button"
           onClick={() => onUpdateExpiry(seat, name)}
           className="px-3 py-1 text-sm rounded bg-blue-600 hover:bg-blue-700 text-white"
         >
           Update Expiry
         </button>
         <button
+          type="button"
           onClick={() => onReplace(seat)}
           className="px-3 py-1 text-sm rounded bg-green-600 hover:bg-green-700 text-white"
         >
           Replace
         </button>
         <button
+          type="button"
           onClick={() => onToggleStatus(seat, status)}
           className={`px-3 py-1 text-sm rounded ${
             status?.toLowerCase() === "pending" ? "bg-green-600" : "bg-red-600"
@@ -67,6 +71,7 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
         {phone && phone.trim() !== "" && (
           <>
             <button
+              type="button"
               onClick={sendWhatsapp}
               className="px-3 py-1 text-sm rounded bg-teal-600 hover:bg-teal-700 text-white"
             >
@@ -75,6 +80,7 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
           </>
         )}
         <button
+          type="button"
         onClick={() => onToggleDayType()}
         className="px-3 py-1 text-sm rounded bg-purple-600 hover:bg-purple-700 text-white"
       >
