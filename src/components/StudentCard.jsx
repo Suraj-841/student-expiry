@@ -1,9 +1,16 @@
-// === StudentCard.jsx (Styled with Dark Mode Support + Actions) ===
+// === StudentCard.jsx (Scroll-Safe & Action-Polished) ===
 
 import React from 'react';
-import QRCode from 'react-qr-code';
 
-export default function StudentCard({ student, onVacate, onUpdateExpiry, onReplace,onToggleStatus,whatsappLink ,onToggleDayType}) {
+export default function StudentCard({
+  student,
+  onVacate,
+  onUpdateExpiry,
+  onReplace,
+  onToggleStatus,
+  whatsappLink,
+  onToggleDayType
+}) {
   const {
     "Seat No": seat,
     "Name": name,
@@ -16,14 +23,18 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
   } = student;
 
   const whatsappURL = `https://wa.me/91${phone}?text=Hi ${name}, please join our study group: ${whatsappLink}`;
-  const sendWhatsapp = () => {
+  const sendWhatsapp = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!phone || phone.trim() === "") return alert("❌ No phone number available.");
     window.open(whatsappURL, '_blank');
   };
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 transition hover:shadow-xl">
-      <h2 className="text-xl font-semibold text-blue-800 dark:text-blue-300 mb-2">Seat {seat}: {name}</h2>
+      <h2 className="text-xl font-semibold text-blue-800 dark:text-blue-300 mb-2">
+        Seat {seat}: {name}
+      </h2>
       <p className="text-sm mb-1"><strong>📞 Phone:</strong> {phone || 'N/A'}</p>
       <p className="text-sm mb-1"><strong>🕓 Day Type:</strong> {day || 'N/A'}</p>
       <p className="text-sm mb-1"><strong>💰 Charge:</strong> ₹{charge || 0}</p>
@@ -39,28 +50,31 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
       <div className="flex flex-wrap gap-2 mt-3">
         <button
           type="button"
-          onClick={() => onVacate(seat)}
+          onClick={(e) => { e.preventDefault(); onVacate(seat); }}
           className="px-3 py-1 text-sm rounded bg-yellow-500 hover:bg-yellow-600 text-white"
         >
           Vacate
         </button>
+
         <button
           type="button"
-          onClick={() => onUpdateExpiry(seat, name)}
+          onClick={(e) => { e.preventDefault(); onUpdateExpiry(seat, name); }}
           className="px-3 py-1 text-sm rounded bg-blue-600 hover:bg-blue-700 text-white"
         >
           Update Expiry
         </button>
+
         <button
           type="button"
-          onClick={() => onReplace(seat)}
+          onClick={(e) => { e.preventDefault(); onReplace(seat); }}
           className="px-3 py-1 text-sm rounded bg-green-600 hover:bg-green-700 text-white"
         >
           Replace
         </button>
+
         <button
           type="button"
-          onClick={() => onToggleStatus(seat, status)}
+          onClick={(e) => { e.preventDefault(); onToggleStatus(seat, status); }}
           className={`px-3 py-1 text-sm rounded ${
             status?.toLowerCase() === "pending" ? "bg-green-600" : "bg-red-600"
           } hover:opacity-90 text-white`}
@@ -69,24 +83,22 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
         </button>
 
         {phone && phone.trim() !== "" && (
-          <>
-            <button
-              type="button"
-              onClick={sendWhatsapp}
-              className="px-3 py-1 text-sm rounded bg-teal-600 hover:bg-teal-700 text-white"
-            >
-              📤 Send WhatsApp
-            </button>
-          </>
+          <button
+            type="button"
+            onClick={sendWhatsapp}
+            className="px-3 py-1 text-sm rounded bg-teal-600 hover:bg-teal-700 text-white"
+          >
+            📤 Send WhatsApp
+          </button>
         )}
+
         <button
           type="button"
-        onClick={() => onToggleDayType()}
-        className="px-3 py-1 text-sm rounded bg-purple-600 hover:bg-purple-700 text-white"
-      >
-        Toggle Day
-      </button>
-
+          onClick={(e) => { e.preventDefault(); onToggleDayType(seat, day); }}
+          className="px-3 py-1 text-sm rounded bg-purple-600 hover:bg-purple-700 text-white"
+        >
+          Toggle Day
+        </button>
       </div>
     </div>
   );
