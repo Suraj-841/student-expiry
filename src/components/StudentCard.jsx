@@ -74,7 +74,12 @@ export default function StudentCard({ student, onVacate, onUpdateExpiry, onRepla
             </button>
           </>
         )}
-
+        <button
+        onClick={() => onToggleDayType()}
+        className="px-3 py-1 text-sm rounded bg-purple-600 hover:bg-purple-700 text-white"
+      >
+        Toggle Day
+      </button>
 
       </div>
     </div>

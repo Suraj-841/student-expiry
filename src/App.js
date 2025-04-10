@@ -37,6 +37,27 @@ export default function App() {
       window.location.href = "https://google.com";
     }
   }, []);
+
+  const toggleDayType = async (seat_no, currentType) => {
+    let newType = "";
+  
+    if (currentType.toLowerCase() === "full day") newType = "Morning Half";
+    else if (currentType.toLowerCase() === "morning half") newType = "Evening Half";
+    else newType = "Full Day";
+  
+    try {
+      await axios.post(`${API_BASE}/update-day-type`, {
+        seat_no,
+        new_day_type: newType
+      });
+      toast.success(`Seat ${seat_no} updated to ${newType}`);
+      fetchStudents();
+    } catch (err) {
+      toast.error("Failed to update day type");
+    }
+  };
+  
+
   const fetchStudents = async () => {
     try {
       let endpoint = `${API_BASE}/students`;
@@ -284,6 +305,7 @@ export default function App() {
             onReplace={() => replaceStudent(student["Seat No"])}
             onToggleStatus={() => toggleStatus(student["Seat No"], student["Status"])}
             whatsappLink={whatsappLink} 
+            onToggleDayType={() => toggleDayType(student["Seat No"], student["Day Type"])}
           />
         ))}
       </div>
