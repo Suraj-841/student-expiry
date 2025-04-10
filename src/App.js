@@ -240,6 +240,15 @@ export default function App() {
         ⬇️ Download Left Students CSV
       </button>
 
+
+      <a
+      href={API_BASE`/download-db`}
+      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md"
+      download
+    >
+      ⬇️ Download DB
+    </a>
+
       <div className="flex items-center gap-2 mt-4">
       <input
         type="text"
