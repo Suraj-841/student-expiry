@@ -360,8 +360,8 @@ export default function App() {
     const seatNo = student["Seat No"];
     const dayType = student["Day Type"]?.toLowerCase();
     const suffix =
-      dayType === "morning half" ? "_A" :
-      dayType === "evening half" ? "_B" :
+      dayType === "morning half" ? "" :
+      dayType === "evening half" ? "" :
       "";
 
     return (
