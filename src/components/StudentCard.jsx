@@ -1,5 +1,3 @@
-// === StudentCard.jsx (Scroll-Safe & Action-Polished) ===
-
 import React from 'react';
 
 export default function StudentCard({
@@ -9,7 +7,8 @@ export default function StudentCard({
   onReplace,
   onToggleStatus,
   whatsappLink,
-  onToggleDayType
+  onToggleDayType,
+  onDelete
 }) {
   const {
     "Seat No": seat,
@@ -30,11 +29,19 @@ export default function StudentCard({
     window.open(whatsappURL, '_blank');
   };
 
+  // Add suffix to Seat No. for half-day types
+  const seatSuffix =
+    day?.toLowerCase() === "morning half"
+      ? "A"
+      : day?.toLowerCase() === "evening half"
+      ? "B"
+      : "";
+
   return (
     <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 transition hover:shadow-xl">
-      <h2 className="text-xl font-semibold text-blue-800 dark:text-blue-300 mb-2">
-        Seat {seat}: {name}
-      </h2>
+    <h2 className="text-xl font-semibold text-blue-800 dark:text-blue-300 mb-2">
+      Seat {student.DisplaySeat || seat}: {name}
+    </h2>
       <p className="text-sm mb-1"><strong>📞 Phone:</strong> {phone || 'N/A'}</p>
       <p className="text-sm mb-1"><strong>🕓 Day Type:</strong> {day || 'N/A'}</p>
       <p className="text-sm mb-1"><strong>💰 Charge:</strong> ₹{charge || 0}</p>
@@ -99,6 +106,22 @@ export default function StudentCard({
         >
           Toggle Day
         </button>
+
+        <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          if (window.confirm(`Are you sure you want to delete Seat ${seat}?`)) {
+            onDelete(seat);
+          }
+        }}
+        className="px-3 py-1 text-sm rounded bg-red-700 hover:bg-red-800 text-white"
+      >
+        ❌ Delete
+      </button>
+
+
+
       </div>
     </div>
   );

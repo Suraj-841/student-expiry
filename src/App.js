@@ -38,6 +38,49 @@ export default function App() {
     }
   }, []);
 
+
+  const insertNewCard = async () => {
+    const seat_no = prompt("Enter new Seat Number:");
+    if (!seat_no) return;
+  
+    const name = prompt("Enter student name:");
+    const day_type = prompt("Enter Day Type (Full Day / Morning Half / Evening Half):");
+    const charge = parseInt(prompt("Enter charge:"), 10);
+    const start_date = prompt("Enter start date (e.g., 01 April):");
+    const phone = prompt("Enter phone number:");
+    const status = prompt("Enter status (Pending / Paid / etc):");
+  
+    try {
+      await axios.post(`${API_BASE}/add-student-card`, {
+        seat_no,
+        name,
+        day_type,
+        charge,
+        start_date,
+        phone,
+        status
+      });
+      toast.success(`Seat ${seat_no} inserted`);
+      fetchStudents();
+    } catch (err) {
+      toast.error("Failed to insert new student");
+    }
+  };
+  
+
+  const deleteCard = async (seat_no) => {
+    if (!window.confirm(`Are you sure you want to delete Seat ${seat_no}?`)) return;
+  
+    try {
+      await axios.delete(`${API_BASE}/remove-student-card/${seat_no}`);
+      toast.success(`Seat ${seat_no} deleted`);
+      fetchStudents(); // Refresh the UI
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete seat");
+    }
+  };
+  
   const toggleDayType = async (seat_no, currentType) => {
     let newType = "";
   
@@ -83,6 +126,23 @@ export default function App() {
         }[dayFilter];
         filtered = filtered.filter(s => (s['Day Type'] || '').toLowerCase() === matchType);
       }
+
+      // 🧠 Sort by Seat No (as string to handle "31_A", "31_B")
+      filtered.sort((a, b) => {
+        const parseSeat = (seat) => {
+          const match = seat.toString().match(/^(\d+)(?:[_-]?([A-Za-z]))?$/);
+          const num = match ? parseInt(match[1]) : 0;
+          const suffix = match && match[2] ? match[2].toUpperCase() : '';
+          return [num, suffix];
+        };
+      
+        const [aNum, aSuffix] = parseSeat(a["Seat No"]);
+        const [bNum, bSuffix] = parseSeat(b["Seat No"]);
+      
+        if (aNum !== bNum) return aNum - bNum;
+        return aSuffix.localeCompare(bSuffix);
+      });
+      
 
       setStudents(filtered);
 
@@ -260,6 +320,14 @@ export default function App() {
         ⬇️ Download Left Students CSV
       </button>
 
+      <button
+      onClick={insertNewCard}
+      className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+    >
+      ➕ Insert New Card
+    </button>
+
+
       <div className="flex items-center gap-2 mt-4">
       <input
         type="text"
@@ -288,19 +356,30 @@ export default function App() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {students.map((student, index) => (
-          <StudentCard
-          key={student["Seat No"]}
-            student={student}
-            onVacate={vacateSeat}
-            onUpdateExpiry={() => updateExpiry(student["Seat No"], student["Name"])}
-            onReplace={() => replaceStudent(student["Seat No"])}
-            onToggleStatus={() => toggleStatus(student["Seat No"], student["Status"])}
-            whatsappLink={whatsappLink} 
-            onToggleDayType={() => toggleDayType(student["Seat No"], student["Day Type"])}
-          />
-        ))}
-      </div>
+  {students.map((student, index) => {
+    const seatNo = student["Seat No"];
+    const dayType = student["Day Type"]?.toLowerCase();
+    const suffix =
+      dayType === "morning half" ? "_A" :
+      dayType === "evening half" ? "_B" :
+      "";
+
+    return (
+      <StudentCard
+        key={`${seatNo}-${suffix}`}
+        student={{ ...student, DisplaySeat: `${seatNo}${suffix}` }}
+        onVacate={vacateSeat}
+        onUpdateExpiry={() => updateExpiry(seatNo, student["Name"])}
+        onReplace={() => replaceStudent(seatNo)}
+        onToggleStatus={() => toggleStatus(seatNo, student["Status"])}
+        whatsappLink={whatsappLink}
+        onToggleDayType={() => toggleDayType(seatNo, student["Day Type"])}
+        onDelete={() => deleteCard(seatNo)}
+      />
+    );
+  })}
+</div>
+
     </div>
   );
 }
