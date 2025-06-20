@@ -235,26 +235,28 @@ export default function StudentCard({
       className={`relative ${isExpired ? 'bg-red-100 dark:bg-red-900' : 'bg-white dark:bg-gray-800'} shadow-xl rounded-2xl p-6 mb-6 border border-gray-200 dark:border-gray-700`}
       style={cardStyle}
     >
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-2 flex-wrap">
         <UserIcon className="h-7 w-7 text-blue-700" />
         <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-200 tracking-tight">
           Seat {student.DisplaySeat || seat}: {name}
         </h2>
-        {isExpired && (
-          <span className="ml-2 px-2 py-1 rounded bg-red-500 text-white text-xs font-semibold flex items-center gap-1">
-            <ExclamationCircleIcon className="h-4 w-4" /> Expired
-          </span>
-        )}
-        {status?.toLowerCase() === 'pending' && (
-          <span className="ml-2 px-2 py-1 rounded bg-yellow-400 text-white text-xs font-semibold flex items-center gap-1">
-            <ClockIcon className="h-4 w-4" /> Pending
-          </span>
-        )}
-        {status?.toLowerCase() === 'done' && (
-          <span className="ml-2 px-2 py-1 rounded bg-green-500 text-white text-xs font-semibold flex items-center gap-1">
-            <CheckCircleIcon className="h-4 w-4" /> Done
-          </span>
-        )}
+        <div className="flex gap-2 flex-wrap">
+          {isExpired && (
+            <span className="px-2 py-1 rounded bg-red-500 text-white text-xs font-semibold flex items-center gap-1">
+              <ExclamationCircleIcon className="h-4 w-4" /> Expired
+            </span>
+          )}
+          {status?.toLowerCase() === 'pending' && !isExpired && (
+            <span className="px-2 py-1 rounded bg-yellow-400 text-white text-xs font-semibold flex items-center gap-1">
+              <ClockIcon className="h-4 w-4" /> Pending
+            </span>
+          )}
+          {status?.toLowerCase() === 'done' && !isExpired && (
+            <span className="px-2 py-1 rounded bg-green-500 text-white text-xs font-semibold flex items-center gap-1">
+              <CheckCircleIcon className="h-4 w-4" /> Done
+            </span>
+          )}
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mb-4">
         <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200"><PhoneIcon className="h-5 w-5" /><strong>Phone:</strong> {phone || 'N/A'}</div>
