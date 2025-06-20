@@ -219,7 +219,7 @@ export default function StudentCard({
   return (
     <div
       className={`relative ${isExpired ? 'bg-red-100 dark:bg-red-900' : 'bg-white dark:bg-gray-800'} shadow-xl rounded-2xl p-6 mb-6 border border-gray-200 dark:border-gray-700`}
-      style={{ fontFamily: 'Inter, sans-serif', maxWidth: 480, margin: 'auto', transition: 'box-shadow 0.2s', boxSizing: 'border-box', minHeight: 0 }}
+      style={{ fontFamily: 'Inter, sans-serif', maxWidth: 480, margin: 'auto', transition: 'none', boxSizing: 'border-box', minHeight: 0 }}
     >
       <div className="flex items-center gap-3 mb-2">
         <UserIcon className="h-7 w-7 text-blue-700" />
