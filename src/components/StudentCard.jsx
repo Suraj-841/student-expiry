@@ -75,6 +75,18 @@ export default function StudentCard({
     if (!phone || phone.trim() === "") return alert("❌ No phone number available.");
     setSendingInvoice(true);
     try {
+      // Ensure payment update is completed before downloading invoice
+      if (typeof student["Seat No"] !== "undefined" && typeof student["Due"] !== "undefined" && student["Due"] > 0) {
+        // Call payment update API and await it
+        const API_BASE = process.env.NODE_ENV === 'development'
+          ? 'http://127.0.0.1:8000'
+          : 'https://backend-4xju.onrender.com';
+        await axios.post(`${API_BASE}/record-payment`, {
+          seat_no: student["Seat No"],
+          amount: student["Due"],
+          // ...add any other required fields here...
+        });
+      }
       let invoiceUrl = student["Invoice URL"];
       if (!invoiceUrl) {
         invoiceUrl = await fetchInvoiceUrl(seat);
@@ -84,7 +96,7 @@ export default function StudentCard({
         setSendingInvoice(false);
         return;
       }
-      // Download the PDF
+      // Download the PDF (after payment update is confirmed)
       const API_BASE = process.env.NODE_ENV === 'development'
         ? 'http://127.0.0.1:8000'
         : 'https://backend-4xju.onrender.com';

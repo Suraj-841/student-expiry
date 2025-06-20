@@ -68,6 +68,7 @@ export default function PaymentsPage() {
         payment_method: paymentMethod,
         remarks: remarks
       };
+      // 1. Record payment and wait for backend confirmation
       const response = await fetch(`${API_BASE}/record-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,16 +79,22 @@ export default function PaymentsPage() {
         setSubmitting(false);
         return;
       }
-      // Download the PDF
+      // 2. Only after payment is confirmed, download the PDF
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'invoice.pdf';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      // iOS fix: must trigger download in a new user gesture (button click), not in async callback
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        toast.success('Payment recorded. Tap below to download invoice.');
+        setInvoiceUrl(window.URL.createObjectURL(blob));
+      } else {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'invoice.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      }
 
       // After payment: update expiry if due is 0, refresh students
       // 1. Fetch updated student info
@@ -275,7 +282,16 @@ export default function PaymentsPage() {
                 </form>
                 {invoiceUrl && (
                   <div className="mt-2">
-                    <button className="bg-blue-600 text-white px-3 py-1 rounded mr-2" onClick={handleDownloadInvoice}>Download Invoice</button>
+                    <button className="bg-blue-600 text-white px-3 py-1 rounded mr-2" onClick={() => {
+                      const a = document.createElement('a');
+                      a.href = invoiceUrl;
+                      a.download = 'invoice.pdf';
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      window.URL.revokeObjectURL(invoiceUrl);
+                      setInvoiceUrl("");
+                    }}>Download Invoice</button>
                     <button className="bg-green-600 text-white px-3 py-1 rounded" onClick={handleShareWhatsApp}>Share via WhatsApp</button>
                   </div>
                 )}
