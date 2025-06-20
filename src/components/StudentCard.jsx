@@ -216,20 +216,24 @@ export default function StudentCard({
     }
   };
 
+  // Responsive card style: much smaller for mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  const cardStyle = {
+    fontFamily: 'Inter, sans-serif',
+    maxWidth: isMobile ? 340 : 480,
+    margin: 'auto',
+    transition: 'none',
+    boxSizing: 'border-box',
+    minHeight: 0,
+    padding: isMobile ? '0.5rem' : '1.5rem',
+    fontSize: isMobile ? '0.85rem' : '1rem',
+    borderRadius: isMobile ? '0.75rem' : '1.5rem',
+  };
+
   return (
     <div
       className={`relative ${isExpired ? 'bg-red-100 dark:bg-red-900' : 'bg-white dark:bg-gray-800'} shadow-xl rounded-2xl p-6 mb-6 border border-gray-200 dark:border-gray-700`}
-      style={{
-        fontFamily: 'Inter, sans-serif',
-        maxWidth: 480,
-        margin: 'auto',
-        transition: 'none',
-        boxSizing: 'border-box',
-        minHeight: 0,
-        padding: window.innerWidth < 640 ? '1rem' : '1.5rem', // smaller padding for mobile
-        fontSize: window.innerWidth < 640 ? '0.95rem' : '1rem', // smaller font for mobile
-        borderRadius: window.innerWidth < 640 ? '1rem' : '1.5rem', // smaller radius for mobile
-      }}
+      style={cardStyle}
     >
       <div className="flex items-center gap-3 mb-2">
         <UserIcon className="h-7 w-7 text-blue-700" />
