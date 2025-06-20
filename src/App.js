@@ -3,11 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import StudentCard from './components/StudentCard';
+import PaymentsPage from "./pages/PaymentsPage";
+import ExpensesPage from "./pages/ExpensesPage";
+import ReportsPage from "./pages/ReportsPage";
+import Navbar from "./components/Navbar";
 
 const API_BASE = 'https://backend-4xju.onrender.com';
-const ACCESS_CODE = "Suraj@123"; 
-
+const ACCESS_CODE = "Suraj@123";
 
 export default function App() {
   const [students, setStudents] = useState([]);
@@ -28,10 +32,17 @@ export default function App() {
       .catch(() => toast.error("Failed to load WhatsApp link"));
   }, []);
 
+  // Use sessionStorage to persist access for the session
   useEffect(() => {
+    const alreadyAllowed = sessionStorage.getItem('isAllowed');
+    if (alreadyAllowed === 'true') {
+      setIsAllowed(true);
+      return;
+    }
     const userInput = prompt("Enter access code:");
     if (userInput === ACCESS_CODE) {
       setIsAllowed(true);
+      sessionStorage.setItem('isAllowed', 'true');
     } else {
       alert("❌ Access denied");
       window.location.href = "https://google.com";
@@ -282,104 +293,108 @@ export default function App() {
 
   if (!isAllowed) return null; 
   return (
-    <div className={darkMode ? 'dark bg-gray-900 text-white min-h-screen p-4' : 'bg-gradient-to-br from-gray-100 to-blue-50 min-h-screen p-4'}>
-      <Toaster />
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-blue-900 dark:text-white drop-shadow-sm flex mx-auto items-center">Student Dashboard</h1>
-        <div className="flex gap-2 flex-wrap">
-        <select
-          onChange={(e) => setFilter(e.target.value)}
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-md px-3 py-1 shadow"
-        >
-          <option value="all">All Status</option>
-          <option value="expired">Expired</option>
-          <option value="vacant">Vacant</option>
-        </select>
-
-        <select
-          onChange={(e) => setDayFilter(e.target.value)}
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-md px-3 py-1 shadow"
-        >
-          <option value="all">All Day Types</option>
-          <option value="full">Full Day</option>
-          <option value="morning">Morning Half</option>
-          <option value="evening">Evening Half</option>
-        </select>
-
-        <button
-          className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
-          onClick={() => setDarkMode(!darkMode)}
-        >
-          {darkMode ? '🌞 Light' : '🌙 Dark'}
-        </button>
-
-        <button
-        onClick={downloadLeftStudentsCSV}
-        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-      >
-        ⬇️ Download Left Students CSV
-      </button>
-
-      <button
-      onClick={insertNewCard}
-      className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-    >
-      ➕ Insert New Card
-    </button>
-
-
-      <div className="flex items-center gap-2 mt-4">
-      <input
-        type="text"
-        value={newLink}
-        onChange={(e) => setNewLink(e.target.value)}
-        className="w-full md:w-96 px-4 py-2 rounded border border-gray-300 dark:bg-gray-700 dark:text-white"
-        placeholder="Paste new WhatsApp group link"
-      />
-      <button
-        onClick={() => {
-          axios.post(`${API_BASE}/whatsapp-link`, { link: newLink })
-            .then(() => {
-              toast.success("WhatsApp link updated!");
-              setWhatsappLink(newLink);
-            })
-            .catch(() => toast.error("Failed to update link"));
-        }}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Save
-      </button>
-    </div>
-
-
+    <Router>
+      <div className={darkMode ? 'dark bg-gray-900 text-white min-h-screen p-4' : 'bg-gradient-to-br from-gray-100 to-blue-50 min-h-screen p-4'}>
+        <Navbar />
+        <Toaster position="top-right" toastOptions={{ style: { fontFamily: 'Inter, sans-serif' } }} />
+        {/* Modern Filter/Action Bar */}
+        <div className="w-full max-w-7xl mx-auto mb-8 rounded-2xl shadow-lg bg-gradient-to-r from-blue-100 via-white to-blue-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 px-6 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-blue-200 dark:border-gray-700">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-blue-900 dark:text-white tracking-tight flex items-center gap-2">
+            <span className="inline-block bg-blue-600 text-white rounded-lg px-3 py-1 text-lg shadow-sm">Student Dashboard</span>
+          </h1>
+          <div className="flex flex-wrap gap-2 items-center justify-center md:justify-end w-full md:w-auto">
+            <select
+              onChange={(e) => setFilter(e.target.value)}
+              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-lg px-3 py-2 shadow focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              value={filter}
+            >
+              <option value="all">All Status</option>
+              <option value="expired">Expired</option>
+              <option value="vacant">Vacant</option>
+            </select>
+            <select
+              onChange={(e) => setDayFilter(e.target.value)}
+              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white rounded-lg px-3 py-2 shadow focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              value={dayFilter}
+            >
+              <option value="all">All Day Types</option>
+              <option value="full">Full Day</option>
+              <option value="morning">Morning Half</option>
+              <option value="evening">Evening Half</option>
+            </select>
+            <button
+              className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition font-semibold shadow"
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              {darkMode ? '🌞 Light' : '🌙 Dark'}
+            </button>
+            <button
+              onClick={downloadLeftStudentsCSV}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold shadow"
+            >
+              ⬇️ Left Students CSV
+            </button>
+            <button
+              onClick={insertNewCard}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-semibold shadow"
+            >
+              <span className="inline-block align-middle mr-1">➕</span> New Card
+            </button>
+          </div>
+          <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+            <input
+              type="text"
+              value={newLink}
+              onChange={(e) => setNewLink(e.target.value)}
+              className="w-full md:w-80 px-4 py-2 rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition shadow"
+              placeholder="Paste new WhatsApp group link"
+            />
+            <button
+              onClick={() => {
+                axios.post(`${API_BASE}/whatsapp-link`, { link: newLink })
+                  .then(() => {
+                    toast.success("WhatsApp link updated!");
+                    setWhatsappLink(newLink);
+                  })
+                  .catch(() => toast.error("Failed to update link"));
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold shadow"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <Routes>
+          <Route path="/" element={
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {students.map((student, index) => {
+                const seatNo = student["Seat No"];
+                const dayType = student["Day Type"]?.toLowerCase();
+                const suffix =
+                  dayType === "morning half" ? "" :
+                  dayType === "evening half" ? "" :
+                  "";
+                return (
+                  <StudentCard
+                    key={`${seatNo}-${suffix}`}
+                    student={{ ...student, DisplaySeat: `${seatNo}${suffix}` }}
+                    onVacate={vacateSeat}
+                    onUpdateExpiry={() => updateExpiry(seatNo, student["Name"])}
+                    onReplace={() => replaceStudent(seatNo)}
+                    onToggleStatus={() => toggleStatus(seatNo, student["Status"])}
+                    whatsappLink={whatsappLink}
+                    onToggleDayType={() => toggleDayType(seatNo, student["Day Type"])}
+                    onDelete={() => deleteCard(seatNo)}
+                  />
+                );
+              })}
+            </div>
+          } />
+          <Route path="/payments" element={<PaymentsPage />} />
+          <Route path="/expenses" element={<ExpensesPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+        </Routes>
       </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  {students.map((student, index) => {
-    const seatNo = student["Seat No"];
-    const dayType = student["Day Type"]?.toLowerCase();
-    const suffix =
-      dayType === "morning half" ? "" :
-      dayType === "evening half" ? "" :
-      "";
-
-    return (
-      <StudentCard
-        key={`${seatNo}-${suffix}`}
-        student={{ ...student, DisplaySeat: `${seatNo}${suffix}` }}
-        onVacate={vacateSeat}
-        onUpdateExpiry={() => updateExpiry(seatNo, student["Name"])}
-        onReplace={() => replaceStudent(seatNo)}
-        onToggleStatus={() => toggleStatus(seatNo, student["Status"])}
-        whatsappLink={whatsappLink}
-        onToggleDayType={() => toggleDayType(seatNo, student["Day Type"])}
-        onDelete={() => deleteCard(seatNo)}
-      />
-    );
-  })}
-</div>
-
-    </div>
+    </Router>
   );
 }
