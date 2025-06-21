@@ -220,7 +220,7 @@ export default function StudentCard({
             : 'https://backend-4xju.onrender.com';
           await axios.post(`${API_BASE}/update-due`, {
             seat_no: seat,
-            new_due: Number(newDue)
+            amount: Number(newDue)
           });
           window.location.reload();
         } catch {
