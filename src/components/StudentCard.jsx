@@ -75,18 +75,6 @@ export default function StudentCard({
     if (!phone || phone.trim() === "") return alert("❌ No phone number available.");
     setSendingInvoice(true);
     try {
-      // Ensure payment update is completed before downloading invoice
-      if (typeof student["Seat No"] !== "undefined" && typeof student["Due"] !== "undefined" && student["Due"] > 0) {
-        // Call payment update API and await it
-        const API_BASE = process.env.NODE_ENV === 'development'
-          ? 'http://127.0.0.1:8000'
-          : 'https://backend-4xju.onrender.com';
-        await axios.post(`${API_BASE}/record-payment`, {
-          seat_no: student["Seat No"],
-          amount: student["Due"],
-          // ...add any other required fields here...
-        });
-      }
       let invoiceUrl = student["Invoice URL"];
       if (!invoiceUrl) {
         invoiceUrl = await fetchInvoiceUrl(seat);
@@ -96,7 +84,7 @@ export default function StudentCard({
         setSendingInvoice(false);
         return;
       }
-      // Download the PDF (after payment update is confirmed)
+      // Download the PDF
       const API_BASE = process.env.NODE_ENV === 'development'
         ? 'http://127.0.0.1:8000'
         : 'https://backend-4xju.onrender.com';
@@ -223,6 +211,23 @@ export default function StudentCard({
           onDelete(seat);
         }
         break;
+      case "update_due": {
+        const newDue = prompt("Enter new due amount:", due !== undefined ? due : "");
+        if (newDue === null || newDue === "" || isNaN(newDue)) return;
+        try {
+          const API_BASE = process.env.NODE_ENV === 'development'
+            ? 'http://127.0.0.1:8000'
+            : 'https://backend-4xju.onrender.com';
+          await axios.post(`${API_BASE}/update-due`, {
+            seat_no: seat,
+            new_due: Number(newDue)
+          });
+          window.location.reload();
+        } catch {
+          alert("Failed to update due amount");
+        }
+        break;
+      }
       default:
         break;
     }
@@ -296,6 +301,7 @@ export default function StudentCard({
           <option value="send_invoice">Send Invoice PDF to WhatsApp</option>
           <option value="toggle_day">Toggle Day</option>
           <option value="delete">Delete</option>
+          <option value="update_due">Update Due Amount</option>
         </select>
         <button
           className="px-5 py-2 text-base rounded-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-semibold shadow-lg transition"
