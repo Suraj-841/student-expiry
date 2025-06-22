@@ -24,26 +24,30 @@ export default function StudentCard({
   } = student;
 
   const [sendingInvoice, setSendingInvoice] = useState(false);
-  const [due, setDue] = useState(undefined);
-  // Dropdown state
+  // Remove the fetchDue effect entirely
+  // Use the due value directly from the student prop
+  const due = student["Due"];
+
+  // const [due, setDue] = useState(undefined);
+  // // Dropdown state
   const [selectedAction, setSelectedAction] = useState("");
 
   // Fetch due amount for this student on mount
-  React.useEffect(() => {
-    const fetchDue = async () => {
-      try {
-        const API_BASE = process.env.NODE_ENV === 'development'
-          ? 'http://127.0.0.1:8000'
-          : 'https://backend-4xju.onrender.com';
-        const res = await axios.get(`${API_BASE}/students`);
-        const dueObj = res.data.find(d => d["Seat No"] === seat);
-        setDue(dueObj ? dueObj["Due"] : 0);
-      } catch {
-        setDue(0);
-      }
-    };
-    fetchDue();
-  }, [seat]);
+  // React.useEffect(() => {
+  //   const fetchDue = async () => {
+  //     try {
+  //       const API_BASE = process.env.NODE_ENV === 'development'
+  //         ? 'http://127.0.0.1:8000'
+  //         : 'https://backend-4xju.onrender.com';
+  //       const res = await axios.get(`${API_BASE}/students`);
+  //       const dueObj = res.data.find(d => d["Seat No"] === seat);
+  //       setDue(dueObj ? dueObj["Due"] : 0);
+  //     } catch {
+  //       setDue(0);
+  //     }
+  //   };
+  //   fetchDue();
+  // }, [seat]);
 
   const whatsappURL = `https://wa.me/91${phone}?text=Hi ${name}, please join our study group: ${whatsappLink}`;
   const sendWhatsapp = (e) => {
